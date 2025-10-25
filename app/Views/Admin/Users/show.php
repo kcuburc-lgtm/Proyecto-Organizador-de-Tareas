@@ -4,7 +4,7 @@
 
 <?= $this->section('content') ?>
 
-<h1>User</h1>
+<h1 class="title">User</h1>
 
 <a href="<?= site_url("/admin/users")?>">&laquo; back to index</a>
 
@@ -14,6 +14,9 @@
 
     <dt>email</dt>
     <dd><?= esc($user->email) ?></dd>
+
+    <dt>Active</dt>
+    <dd><?= $user->is_active ? 'yes' : 'no' ?></dd>
 
     <dt>Administrator</dt>
     <dd><?= $user->is_admin ? 'yes' : 'no' ?></dd>

@@ -62,3 +62,28 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'lo
 });
 });
 
+$routes->get('home/testemail', 'Home::testEmail');
+$routes->get('signup/activate/(:any)', 'Signup::activate/$1');
+
+$routes->get('password/forgot', 'Password::forgot');
+$routes->post('password/forgot', 'Password::processForgot');
+$routes->post('password/processforgot', 'Password::processForgot');
+$routes->get('password/resetsent', 'Password::resetSent');
+$routes->get('password/reset/(:any)', 'Password::reset/$1');
+$routes->post('password/processreset/(:any)', 'Password::processReset/$1');
+$routes->get('password/resetsuccess', 'Password::resetSuccess');
+$routes->get('profile/show', 'Profile::show');
+
+$routes->get('profile/edit', 'Profile::edit');
+$routes->post('profile/update', 'Profile::update');
+$routes->get('profile/editpassword', 'Profile::editPassword');
+$routes->post('profile/updatepassword', 'Profile::updatePassword');
+
+$routes->get('profile/authenticate', 'Profile::authenticate'); 
+$routes->post('profile/processauthenticate', 'Profile::processAuthenticate');
+
+$routes->get('profileimage/edit', 'Profileimage::edit'); 
+$routes->post('profileimage/update', 'Profileimage::update'); 
+$routes->get('profile/image', 'Profile::image'); 
+$routes->get('profileimage/delete', 'Profileimage::delete'); 
+$routes->post('profileimage/delete', 'Profileimage::delete');

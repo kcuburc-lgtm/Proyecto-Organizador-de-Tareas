@@ -4,7 +4,7 @@
 
 <?= $this->section('content') ?>
 
-    <h1>TASKS</h1>
+    <h1 class="title">TASKS</h1>
 
     <a href="<?= site_url("/tasks/new") ?>">New task</a>
 

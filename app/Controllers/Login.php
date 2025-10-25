@@ -14,17 +14,19 @@ class Login extends BaseController
     {
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
+        $remember_me = (bool) $this->request->getPost('remember_me');
 
         $auth = service('auth');
 
-        if ($auth->login($email, $password)) {
+        if ($auth->login($email, $password, $remember_me)) {
 
             $redirect_url = session('redirect_url') ?? '/';
 
             unset($_SESSION['redirect_url']);
 
             return redirect()->to("$redirect_url")
-                             ->with('info', 'Login successful');
+                             ->with('info', 'Login successful')
+                             ->withCookies();
         } else  {
 
             return redirect()->back()
@@ -37,7 +39,8 @@ class Login extends BaseController
     {
         service('auth')->logout();
 
-        return redirect()->to('/login/showLogoutMessage');
+        return redirect()->to('/login/showLogoutMessage')
+                         ->withCookies();
     }
 
     public function showLogoutMessage()

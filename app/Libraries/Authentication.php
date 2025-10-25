@@ -2,6 +2,7 @@
 
 namespace App\Libraries;
 use App\Models\UserModel;
+use App\Models\RememberedLoginModel;
 
 class Authentication 
 
@@ -9,7 +10,7 @@ class Authentication
 
     private $user;
 
-   public function login($email, $password)
+   public function login($email, $password, $remember_me)
     {
         
         $model = new UserModel;
@@ -32,31 +33,114 @@ class Authentication
             return false;
         }
         
-        $session = session();
-        $session->regenerate();
-        $session->set('user_id', $user->id);
+        $this->logInUser($user);
+
+        if ($remember_me) {
+
+            $this->rememberLogin($user->id);
+
+        }
 
         return true;
 
     }
 
+     public function logInUser($user)
+    {
+         $session = session();
+        $session->regenerate();
+        $session->set('user_id', $user->id);
+    }
+
+    public function rememberLogin($user_id)
+    {
+        $model = new \App\Models\RememberedLoginModel;
+
+        list($token, $expiry) = $model->rememberUserLogin($user_id);
+
+        $response = service('response');
+
+        $response->setCookie('remember_me', $token, $expiry);
+    }
+
     public function logout()
     {
+
+        $token = service('request')->getCookie('remember_me');
+
+        if ($token !== null) {
+
+            $model = new RememberedLoginModel;
+
+            $model->deleteByToken($token);
+        }
+        service('response')->deleteCookie('remember_me');
+
         session()->destroy();
+    }
+
+     public function getUserFromSession()
+    {
+         if ( ! session()->has('user_id')) {
+
+            return null;
+        }
+
+        $model = new \App\Models\UserModel;
+
+        $user = $model->find(session()->get('user_id'));
+
+        if ($user && $user->is_active) {
+
+            return $user;
+            }
+    }
+
+     public function getUserFromRememberCookie()
+    {
+        $request = service('request');
+
+        $token = $request->getCookie('remember_me');
+
+        if ($token === null) {
+
+            return null;
+        }
+
+        $remembered_login_model = new RememberedLoginModel;
+
+        $remembered_login = $remembered_login_model->findByToken($token);
+
+        if ($remembered_login === null) {
+
+            return null;
+        }
+
+        $user_model = new UserModel;
+
+        $user = $user_model->find($remembered_login['user_id']);
+
+        if ($user && $user->is_active) {
+
+            $this->logInUser($user);
+
+            return $user;
+
+        }
     }
 
      public function getCurrentUser()
     {
-        if ( ! $this->isLoggedIn())
-        {
-            return null;
+
+        if ($this->user === null) {
+
+            $this->user = $this->getUserFromSession();
+        
         }
 
         if ($this->user === null) {
 
-        $model = new \App\Models\UserModel;
-
-        $this->user = $model->find(session()->get('user_id'));
+            $this->user = $this->getUserFromRememberCookie();
         }
 
         return $this->user;
@@ -64,6 +148,6 @@ class Authentication
 
     public function isLoggedIn()
     {
-        return session()->has('user_id');
+        return $this->getCurrentUser() !== null;
     }
 }

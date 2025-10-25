@@ -4,7 +4,7 @@
 
 <?= $this->section('content') ?>
 
-<h1>Login</h1>
+<h1 class="title">Login</h1>
 
 <?= form_open("/login/create") ?>
 
@@ -18,8 +18,17 @@
         <input type="password" name="password">
     </div>
 
+    <div>
+        <label for="remember_me">
+            <input type="checkbox" id="remember_me" name="remember_me"
+                <?php if (old('remember_me')): ?>checked<?php endif; ?>> remember me
+        </label>
+    </div>
+
     <button>Log in</button>
     <?= csrf_field() ?>
+
+    <a href="<?= site_url("/password/forgot") ?>">Forgot password</a>
     
 <?= form_close() ?>
 

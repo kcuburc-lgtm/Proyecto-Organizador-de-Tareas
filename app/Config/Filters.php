@@ -79,7 +79,13 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-             'csrf',
+            'csrf' => [
+            'except' => [
+                'password/forgot',
+                'password/processforgot',
+                'password/processreset/*'
+            ]
+        ]
             // 'invalidchars',
         ],
         'after' => [
@@ -117,12 +123,19 @@ class Filters extends BaseFilters
             'before' => [
                 'tasks',
                 'tasks/*',
-                'admin/*'
+                'admin/*',
+                'profile/*',
+                'profileimage/*'
             ]
         ],
         'admin' => [
             'before' =>[
                 'admin/*'
+            ]
+        ],
+        'guest' => [
+            'before' => [
+                'password/*'
             ]
         ]
     ];

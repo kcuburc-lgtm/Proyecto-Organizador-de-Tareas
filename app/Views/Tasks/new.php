@@ -4,7 +4,7 @@
 
 <?= $this->section('content') ?>
 
-<h1>New task</h1>
+<h1 class="title">New task</h1>
 
 <?php if (session()->has('errors')): ?>
     <ul>
